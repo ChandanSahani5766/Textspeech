@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Text to Speech</title>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=ZAXszTA4"></script>
+<style>
+	.container {
+		text-align: center;
+	}
+	textarea {
+		width: 600px;
+		height: 300px;
+		padding: 10px;
+		margin-top: 100px;
+		font-size: 20px;
+		resize: none;
+	}
+	textarea:focus {
+		outline: none;
+	}
+	#rate-value {
+		display: inline-block;
+		border: 1px solid black;
+		border-radius: 4px;
+		width: 50px;
+	}
+	#resume {
+		display: none;
+	}
+</style>
+</head>
+
+<body>
+	<!-- lets make the UI of the page -->
+	<div class="container">
+		<textarea id="text" placeholder="Enter your text"></textarea>
+		<div class="controls">
+			<input type="range" min="0" max="1.5" step="0.1" id="rate" value="1"><div id="rate-value">1</div>
+			<button type="button" id="start">Start</button>
+			<button type="button" id="pause">Pause</button>
+			<button type="button" id="resume">Resume</button>
+			<button type="button" id="canc">Cancel</button>
+			<select id="voice-list">
+				<option value="ok">ok</option>
+			</select>
+		</div>
+	</div>
+	<script>
+		// lets start this working 
+		// first get all languages list
+		var voicelist = responsiveVoice.getVoices();
+		var allVoices;
+		for(var i=0; i<voicelist.length; i++){
+			var voice = '<option value="'+voicelist[i].name+'">'+voicelist[i].name+'</option>';
+			allVoices = allVoices + voice;
+		}
+		document.getElementById("voice-list").innerHTML = allVoices;
+		// get controls in js variables
+		var start = document.getElementById("start");
+		var pause = document.getElementById("pause");
+		var resume = document.getElementById("resume");
+		var canc = document.getElementById("canc");
+		var rate = document.getElementById("rate");
+		rate.oninput = function() {
+			document.getElementById("rate-value").innerHTML = rate.value;
+		}
+		start.onclick = function() {
+			var text = document.getElementById("text").value;
+			var lang = document.getElementById("voice-list").value;
+			var rateValue = document.getElementById("rate").value;
+			responsiveVoice.speak(text, lang, {rate: rateValue});
+		}
+		pause.onclick = function() {
+			if(responsiveVoice.isPlaying()){
+				responsiveVoice.pause();
+				pause.style.display = "none";
+				resume.style.display = "inline";
+			}
+		}
+		resume.onclick = function() {
+			if(responsiveVoice.isPlaying()){
+				responsiveVoice.resume();
+				pause.style.display = "inline";
+				resume.style.display = "none";
+			}
+		}
+		canc.onclick = function() {
+			responsiveVoice.cancel();
+		}
+	</script>
+</body>
+</html>
